@@ -375,6 +375,20 @@ static int do_pin(int argc, char **argv)
 	return err;
 }
 
+static int do_attach(int argc, char **argv) {
+	/* pseudo code
+	 * step 1. parsing bpf_prog_fd from argv
+	 * step 2. get bpf_prog_info via calling __sys_bpf(BPF_OBJ_GET_INFO_BY_FD)
+	 * step 3. filling bpf_program structure according to bpf_prog_info
+	 * 	   (the necessary field for kprobe type bpf program: 
+	 * 	    1. prog->sec_def->prog_attach_fn
+	 * 	    2. prog->instance.nr and prog->instance.fds, necessary for bpf_program__fd
+	 * 	    3. prog->name) see bpf_program__attach_kprobe_multi_opts for more information.
+	 * step 4. call bpf_program__attach(bpf_program) to attach bpf_program to kprobe
+	 * */
+
+}
+
 static int do_detach(int argc, char **argv)
 {
 	int err, fd;
@@ -430,6 +444,7 @@ static const struct cmd cmds[] = {
 	{ "list",	do_show },
 	{ "help",	do_help },
 	{ "pin",	do_pin },
+	{ "attach",	do_attach},
 	{ "detach",	do_detach },
 	{ 0 }
 };
