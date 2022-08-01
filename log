@@ -1,0 +1,164 @@
+➜  bpftool git:(master) ✗ sudo ./bpftool prog load ~/source/linux/samples/bpf/tracex1_kern.o ~/any_test/bpf_test/pipe -dd > log
+libbpf: loading /home/markshu/source/linux/samples/bpf/tracex1_kern.o
+libbpf: elf: section(3) kprobe/__netif_receive_skb_core, size 384, link 0, flags 6, type=1
+libbpf: sec 'kprobe/__netif_receive_skb_core': found program 'bpf_prog1' at insn offset 0 (0 bytes), code size 48 insns (384 bytes)
+libbpf: elf: section(4) .rodata.str1.1, size 15, link 0, flags 32, type=1
+libbpf: elf: section(5) license, size 4, link 0, flags 3, type=1
+libbpf: license of /home/markshu/source/linux/samples/bpf/tracex1_kern.o is GPL
+libbpf: elf: section(6) version, size 4, link 0, flags 3, type=1
+libbpf: kernel version of /home/markshu/source/linux/samples/bpf/tracex1_kern.o is 51300
+libbpf: elf: section(13) .BTF, size 1142, link 0, flags 0, type=1
+libbpf: elf: section(15) .BTF.ext, size 384, link 0, flags 0, type=1
+libbpf: elf: section(21) .symtab, size 101040, link 1, flags 0, type=2
+libbpf: looking for externs among 4210 symbols...
+libbpf: collected 0 externs total
+libbpf: map '.rodata.str1.1' (global data): at sec_idx 4, offset 0, flags 480.
+libbpf: map 0 is ".rodata.str1.1"
+libbpf: map '.rodata.str1.1': created successfully, fd=4
+libbpf: prog 'bpf_prog1': -- BEGIN PROG LOAD LOG --
+func#0 @0
+R1 type=ctx expected=fp
+0: R1=ctx(id=0,off=0,imm=0) R10=fp0
+; bpf_probe_read_kernel(&skb, sizeof(skb), (void *)PT_REGS_PARM1(ctx));
+0: (79) r3 = *(u64 *)(r1 +112)
+1: R1=ctx(id=0,off=0,imm=0) R3_w=inv(id=0) R10=fp0
+1: (bf) r1 = r10
+2: R1_w=fp0 R3_w=inv(id=0) R10=fp0
+;
+2: (07) r1 += -24
+3: R1_w=fp-24 R3_w=inv(id=0) R10=fp0
+; bpf_probe_read_kernel(&skb, sizeof(skb), (void *)PT_REGS_PARM1(ctx));
+3: (b7) r2 = 8
+4: R1_w=fp-24 R2_w=inv8 R3_w=inv(id=0) R10=fp0
+4: (85) call bpf_probe_read_kernel#113
+last_idx 4 first_idx 0
+regs=4 stack=0 before 3: (b7) r2 = 8
+5: R0_w=inv(id=0) R10=fp0 fp-24=mmmmmmmm
+5: (b7) r6 = 0
+6: R0_w=inv(id=0) R6_w=inv0 R10=fp0 fp-24=mmmmmmmm
+; dev = _(skb->dev);
+6: (7b) *(u64 *)(r10 -16) = r6
+last_idx 6 first_idx 0
+regs=40 stack=0 before 5: (b7) r6 = 0
+7: R0_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+7: (79) r3 = *(u64 *)(r10 -24)
+8: R0_w=inv(id=0) R3_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+8: (07) r3 += 16
+9: R0_w=inv(id=0) R3_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+9: (bf) r1 = r10
+10: R0_w=inv(id=0) R1_w=fp0 R3_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+;
+10: (07) r1 += -16
+11: R0_w=inv(id=0) R1_w=fp-16 R3_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+; dev = _(skb->dev);
+11: (b7) r2 = 8
+12: R0_w=inv(id=0) R1_w=fp-16 R2_w=inv8 R3_w=inv(id=0) R6_w=invP0 R10=fp0 fp-16_w=00000000 fp-24=mmmmmmmm
+12: (85) call bpf_probe_read_kernel#113
+last_idx 12 first_idx 0
+regs=4 stack=0 before 11: (b7) r2 = 8
+13: R0=inv(id=0) R6=invP0 R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+13: (79) r7 = *(u64 *)(r10 -16)
+14: R0=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+; len = _(skb->len);
+14: (63) *(u32 *)(r10 -16) = r6
+15: R0=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+15: (79) r3 = *(u64 *)(r10 -24)
+16: R0=inv(id=0) R3_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+16: (07) r3 += 112
+17: R0=inv(id=0) R3_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+17: (bf) r1 = r10
+18: R0=inv(id=0) R1_w=fp0 R3_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+;
+18: (07) r1 += -16
+19: R0=inv(id=0) R1_w=fp-16 R3_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+; len = _(skb->len);
+19: (b7) r2 = 4
+20: R0=inv(id=0) R1_w=fp-16 R2_w=inv4 R3_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmm0000 fp-24=mmmmmmmm
+20: (85) call bpf_probe_read_kernel#113
+last_idx 20 first_idx 13
+regs=4 stack=0 before 19: (b7) r2 = 4
+21: R0_w=inv(id=0) R6=invP0 R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+21: (61) r6 = *(u32 *)(r10 -16)
+22: R0_w=inv(id=0) R6_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+22: (bf) r1 = r10
+23: R0_w=inv(id=0) R1_w=fp0 R6_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+;
+23: (07) r1 += -16
+24: R0_w=inv(id=0) R1_w=fp-16 R6_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+; bpf_probe_read_kernel(devname, sizeof(devname), dev->name);
+24: (b7) r2 = 16
+25: R0_w=inv(id=0) R1_w=fp-16 R2_w=inv16 R6_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7_w=inv(id=0) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+25: (bf) r3 = r7
+26: R0_w=inv(id=0) R1_w=fp-16 R2_w=inv16 R3_w=inv(id=1) R6_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7_w=inv(id=1) R10=fp0 fp-16=mmmmmmmm fp-24=mmmmmmmm
+26: (85) call bpf_probe_read_kernel#113
+last_idx 26 first_idx 13
+regs=4 stack=0 before 25: (bf) r3 = r7
+regs=4 stack=0 before 24: (b7) r2 = 16
+27: R0=inv(id=0) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+; if (devname[0] == 'l' && devname[1] == 'o') {
+27: (71) r1 = *(u8 *)(r10 -16)
+28: R0=inv(id=0) R1_w=inv(id=0,umax_value=255,var_off=(0x0; 0xff)) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+; if (devname[0] == 'l' && devname[1] == 'o') {
+28: (55) if r1 != 0x6c goto pc+17
+ R0=inv(id=0) R1_w=inv108 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+29: R0=inv(id=0) R1_w=inv108 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+; if (devname[0] == 'l' && devname[1] == 'o') {
+29: (71) r1 = *(u8 *)(r10 -15)
+30: R0=inv(id=0) R1_w=inv(id=0,umax_value=255,var_off=(0x0; 0xff)) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+; if (devname[0] == 'l' && devname[1] == 'o') {
+30: (55) if r1 != 0x6f goto pc+15
+ R0=inv(id=0) R1_w=inv111 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+31: R0=inv(id=0) R1_w=inv111 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+31: (b7) r1 = 0
+32: R0=inv(id=0) R1_w=inv0 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm
+; char fmt[] = "skb %p len %d\n";
+32: (73) *(u8 *)(r10 -26) = r1
+last_idx 32 first_idx 27
+regs=2 stack=0 before 31: (b7) r1 = 0
+33: R0=inv(id=0) R1_w=invP0 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0??????
+33: (b7) r1 = 2660
+34: R0=inv(id=0) R1_w=inv2660 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0??????
+34: (6b) *(u16 *)(r10 -28) = r1
+35: R0=inv(id=0) R1_w=inv2660 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mm????
+35: (b7) r1 = 622882405
+36: R0=inv(id=0) R1_w=inv622882405 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mm????
+36: (63) *(u32 *)(r10 -32) = r1
+37: R0=inv(id=0) R1_w=inv622882405 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm
+37: (18) r1 = 0x6c20702520626b73
+39: R0=inv(id=0) R1_w=inv7791350660110379891 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm
+39: (7b) *(u64 *)(r10 -40) = r1
+40: R0=inv(id=0) R1_w=inv7791350660110379891 R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv779135066011
+0379891
+; bpf_trace_printk(fmt, sizeof(fmt), skb, len);
+40: (79) r3 = *(u64 *)(r10 -24)
+41: R0=inv(id=0) R1_w=inv7791350660110379891 R3_w=inv(id=0) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv7791350660110379891
+41: (bf) r1 = r10
+42: R0=inv(id=0) R1_w=fp0 R3_w=inv(id=0) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv7791350660110379891
+; char fmt[] = "skb %p len %d\n";
+42: (07) r1 += -40
+43: R0=inv(id=0) R1_w=fp-40 R3_w=inv(id=0) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv7791350660110379891
+; bpf_trace_printk(fmt, sizeof(fmt), skb, len);
+43: (b7) r2 = 15
+44: R0=inv(id=0) R1_w=fp-40 R2_w=inv15 R3_w=inv(id=0) R6=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv7791350660110379891
+44: (bf) r4 = r6
+45: R0=inv(id=0) R1_w=fp-40 R2_w=inv15 R3_w=inv(id=0) R4_w=inv(id=2,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6=inv(id=2,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?0mmmmmm fp-40_w=inv7791350660110379891
+45: (85) call bpf_trace_printk#6
+last_idx 45 first_idx 27
+regs=4 stack=0 before 44: (bf) r4 = r6
+regs=4 stack=0 before 43: (b7) r2 = 15
+46: R0=inv(id=0) R6=inv(id=2,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?mmmmmmm fp-40=mmmmmmmm
+; return 0;
+46: (b7) r0 = 0
+47: R0_w=inv0 R6=inv(id=2,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R7=inv(id=1) R10=fp0 fp-8=mmmmmmmm fp-16=mmmmmmmm fp-24=mmmmmmmm fp-32=?mmmmmmm fp-40=mmmmmmmm
+47: (95) exit
+
+from 30 to 46: safe
+
+from 28 to 46: safe
+verification time 675 usec
+stack depth 40
+processed 49 insns (limit 1000000) max_states_per_insn 0 total_states 3 peak_states 3 mark_read 1
+-- END PROG LOAD LOG --
+Error: failed to pin program kprobe/__netif_receive_skb_core
+Warning: bpftool is now running in libbpf strict mode and has more stringent requirements about BPF programs.
+If it used to work for this object file but now doesn't, see --legacy option for more details.

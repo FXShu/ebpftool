@@ -1,0 +1,129 @@
+From d7c78d1e38cde73c85b491a833f0e6e3f0d62654 Mon Sep 17 00:00:00 2001
+From: Shahab Vahedi <shahab@synopsys.com>
+Date: Tue, 14 Jun 2022 10:12:21 +0200
+Subject: [PATCH] Revert commit "bpftool: Add bpf_cookie to link output"
+
+Building bpftool on a Debian bullseye with clang-11 fails [1].
+This patch reverts the offending commit [2]. If clang-11 is not
+installed, then the "co-re" feature of bpf will not be enabled
+and the issue remains dormant.
+
+[1] Building release 6.8.0 on Debian 11
+https://lore.kernel.org/bpf/c47f732d-dba8-2c13-7c72-3a651bf72353@synopsys.com/t/#u
+
+[2] bpftool: Add bpf_cookie to link output
+https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/commit/?id=cbdaf71f
+
+Signed-off-by: Shahab Vahedi <shahab@synopsys.com>
+---
+ src/main.h                  |  2 --
+ src/pids.c                  |  8 --------
+ src/skeleton/pid_iter.bpf.c | 22 ----------------------
+ src/skeleton/pid_iter.h     |  2 --
+ 4 files changed, 34 deletions(-)
+
+diff --git a/src/main.h b/src/main.h
+index aa99ffa..2f2b638 100644
+--- a/src/main.h
++++ b/src/main.h
+@@ -111,9 +111,7 @@ struct obj_ref {
+ 
+ struct obj_refs {
+ 	int ref_cnt;
+-	bool has_bpf_cookie;
+ 	struct obj_ref *refs;
+-	__u64 bpf_cookie;
+ };
+ 
+ struct btf;
+diff --git a/src/pids.c b/src/pids.c
+index e2d00d3..57f0d1b 100644
+--- a/src/pids.c
++++ b/src/pids.c
+@@ -78,8 +78,6 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
+ 	ref->pid = e->pid;
+ 	memcpy(ref->comm, e->comm, sizeof(ref->comm));
+ 	refs->ref_cnt = 1;
+-	refs->has_bpf_cookie = e->has_bpf_cookie;
+-	refs->bpf_cookie = e->bpf_cookie;
+ 
+ 	err = hashmap__append(map, u32_as_hash_field(e->id), refs);
+ 	if (err)
+@@ -206,9 +204,6 @@ void emit_obj_refs_json(struct hashmap *map, __u32 id,
+ 		if (refs->ref_cnt == 0)
+ 			break;
+ 
+-		if (refs->has_bpf_cookie)
+-			jsonw_lluint_field(json_writer, "bpf_cookie", refs->bpf_cookie);
+-
+ 		jsonw_name(json_writer, "pids");
+ 		jsonw_start_array(json_writer);
+ 		for (i = 0; i < refs->ref_cnt; i++) {
+@@ -238,9 +233,6 @@ void emit_obj_refs_plain(struct hashmap *map, __u32 id, const char *prefix)
+ 		if (refs->ref_cnt == 0)
+ 			break;
+ 
+-		if (refs->has_bpf_cookie)
+-			printf("\n\tbpf_cookie %llu", (unsigned long long) refs->bpf_cookie);
+-
+ 		printf("%s", prefix);
+ 		for (i = 0; i < refs->ref_cnt; i++) {
+ 			struct obj_ref *ref = &refs->refs[i];
+diff --git a/src/skeleton/pid_iter.bpf.c b/src/skeleton/pid_iter.bpf.c
+index eb05ea5..f70702f 100644
+--- a/src/skeleton/pid_iter.bpf.c
++++ b/src/skeleton/pid_iter.bpf.c
+@@ -38,17 +38,6 @@ static __always_inline __u32 get_obj_id(void *ent, enum bpf_obj_type type)
+ 	}
+ }
+ 
+-/* could be used only with BPF_LINK_TYPE_PERF_EVENT links */
+-static __u64 get_bpf_cookie(struct bpf_link *link)
+-{
+-	struct bpf_perf_link *perf_link;
+-	struct perf_event *event;
+-
+-	perf_link = container_of(link, struct bpf_perf_link, link);
+-	event = BPF_CORE_READ(perf_link, perf_file, private_data);
+-	return BPF_CORE_READ(event, bpf_cookie);
+-}
+-
+ SEC("iter/task_file")
+ int iter(struct bpf_iter__task_file *ctx)
+ {
+@@ -80,19 +69,8 @@ int iter(struct bpf_iter__task_file *ctx)
+ 	if (file->f_op != fops)
+ 		return 0;
+ 
+-	__builtin_memset(&e, 0, sizeof(e));
+ 	e.pid = task->tgid;
+ 	e.id = get_obj_id(file->private_data, obj_type);
+-
+-	if (obj_type == BPF_OBJ_LINK) {
+-		struct bpf_link *link = (struct bpf_link *) file->private_data;
+-
+-		if (BPF_CORE_READ(link, type) == BPF_LINK_TYPE_PERF_EVENT) {
+-			e.has_bpf_cookie = true;
+-			e.bpf_cookie = get_bpf_cookie(link);
+-		}
+-	}
+-
+ 	bpf_probe_read_kernel_str(&e.comm, sizeof(e.comm),
+ 				  task->group_leader->comm);
+ 	bpf_seq_write(ctx->meta->seq, &e, sizeof(e));
+diff --git a/src/skeleton/pid_iter.h b/src/skeleton/pid_iter.h
+index bbb570d..5692cf2 100644
+--- a/src/skeleton/pid_iter.h
++++ b/src/skeleton/pid_iter.h
+@@ -6,8 +6,6 @@
+ struct pid_iter_entry {
+ 	__u32 id;
+ 	int pid;
+-	__u64 bpf_cookie;
+-	bool has_bpf_cookie;
+ 	char comm[16];
+ };
+ 
+-- 
+2.30.2
+
